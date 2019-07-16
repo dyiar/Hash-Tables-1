@@ -17,14 +17,19 @@ class LinkedPair:
 # '''
 class HashTable:
     def __init__(self, capacity):
-        pass
+        self.capacity = capacity
+        self.storage = [None] * capacity
 
 
 # '''
 # Research and implement the djb2 hash function
 # '''
 def hash(string, max):
-    pass
+    hash = 5381
+    for x in string:
+        hash = ((hash << 5) + hash) + ord(x)
+    
+    return hash % max
 
 
 # '''
@@ -33,7 +38,18 @@ def hash(string, max):
 # Hint: Used the LL to handle collisions
 # '''
 def hash_table_insert(hash_table, key, value):
-    pass
+    i = hash(key, len(hash_table.storage))
+
+    current = hash_table.storage[i]
+    last = None
+
+    while current is not None and current.key != key:
+        last = current
+        current = last.next
+
+    new_pair = LinkedPair(key, value)
+    new_pair.next = hash_table.storage[i]
+    hash_table.storage[i] = new_pair
 
 
 # '''
@@ -42,7 +58,25 @@ def hash_table_insert(hash_table, key, value):
 # If you try to remove a value that isn't there, print a warning.
 # '''
 def hash_table_remove(hash_table, key):
-    pass
+    i = hash(key, len(hash_table.storage))
+
+    current = hash_table.storage[i]
+    last = None
+
+    while current is not None and current.key != key:
+        last = current
+        current = last.next
+        
+    if current is None:
+        print("Warning, the value you want to remove is not here")
+    else:
+        if last is None:
+            hash_table.storage[i] = current.next 
+        else:
+            last.next = current.next
+
+    
+
 
 
 # '''
@@ -51,14 +85,37 @@ def hash_table_remove(hash_table, key):
 # Should return None if the key is not found.
 # '''
 def hash_table_retrieve(hash_table, key):
-    pass
+    i = hash(key, len(hash_table.storage))
+
+    current = hash_table.storage[i]
+
+    while current is not None:
+        if current.key == key:
+            return current.value
+        else:
+            current = current.next
+
+    
+    
+
+
 
 
 # '''
 # Fill this in
 # '''
 def hash_table_resize(hash_table):
-    pass
+    new_ht = HashTable(2 * len(hash_table.storage))
+
+    current = None
+
+    for i in range(len(hash_table.storage)):
+        current = hash_table.storage[i]
+        while current is not None:
+            hash_table_insert(new_ht, hash_table.storage[i].key, hash_table.storage[i].value)
+            current = current.next
+
+    return new_ht
 
 
 def Testing():
